@@ -25,3 +25,35 @@ body {
     text-wrap: balance;
   }
 }
+
+/* === MOTION SYSTEM === */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-hero { animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-hero-delay-1 { animation-delay: 0.1s; }
+.animate-hero-delay-2 { animation-delay: 0.2s; }
+.animate-hero-delay-3 { animation-delay: 0.35s; }
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.btn-lift {
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+.btn-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero, .animate-hero-delay-1, .animate-hero-delay-2, .animate-hero-delay-3,
+  .reveal, .btn-lift {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

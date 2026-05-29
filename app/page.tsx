@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Home() {
   const [description, setDescription] = useState("");
@@ -8,6 +8,25 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [sopOutput, setSopOutput] = useState("");
   const [error, setError] = useState("");
+
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [visibleSections, setVisibleSections] = useState<Set<number>>(new Set());
+  useEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      setVisibleSections(new Set(Array.from({length: 10}, (_, i) => i)));
+      return;
+    }
+    const observers = sectionRefs.current.map((ref, i) => {
+      if (!ref) return null;
+      const obs = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) setVisibleSections(prev => new Set([...prev, i]));
+      }, { threshold: 0.1 });
+      obs.observe(ref);
+      return obs;
+    });
+    return () => observers.forEach(obs => obs?.disconnect());
+  }, []);
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
@@ -115,7 +134,7 @@ export default function Home() {
           }}>
             SOP GENERATOR FOR SERVICE BUSINESSES
           </div>
-          <h1 style={{
+          <h1 className="animate-hero" style={{
             fontSize: "clamp(2rem, 4vw, 3rem)",
             fontWeight: 700,
             color: "#1A2E2A",
@@ -125,14 +144,14 @@ export default function Home() {
           }}>
             Stop re-explaining the same job to every new hire.
           </h1>
-          <p style={{
+          <p className="animate-hero animate-hero-delay-1" style={{
             color: "#4A7A6B", fontSize: "1.1rem", lineHeight: 1.7,
             marginBottom: "2rem", maxWidth: "480px"
           }}>
             Describe a process in plain English. DraftKit writes the professional SOP document — formatted, printable, ready to hand to your team.
           </p>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-            <a href="#demo" style={{
+          <div className="animate-hero animate-hero-delay-2" style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            <a href="#demo" className="btn-lift" style={{
               background: "#2D6A4F", color: "#fff",
               padding: "0.9rem 1.8rem", borderRadius: "8px",
               textDecoration: "none", fontWeight: 600, fontSize: "1rem",
@@ -140,7 +159,7 @@ export default function Home() {
             }}>
               Generate Your First SOP Free →
             </a>
-            <a href="#example" style={{
+            <a href="#example" className="btn-lift" style={{
               background: "transparent", color: "#2D6A4F",
               padding: "0.9rem 1.8rem", borderRadius: "8px",
               textDecoration: "none", fontWeight: 600, fontSize: "1rem",
@@ -209,7 +228,7 @@ export default function Home() {
       </section>
 
       {/* SOCIAL PROOF BAR */}
-      <section style={{
+      <section ref={el => { sectionRefs.current[0] = el as HTMLDivElement; }} className={`reveal ${visibleSections.has(0) ? 'visible' : ''}`} style={{
         background: "#EEF7F2",
         border: "1px solid #C8E6D4",
         borderLeft: "none", borderRight: "none",
@@ -234,7 +253,7 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how-it-works" style={{ maxWidth: "1100px", margin: "0 auto", padding: "5rem 2rem" }}>
+      <section ref={el => { sectionRefs.current[1] = el as HTMLDivElement; }} className={`reveal reveal-delay-1 ${visibleSections.has(1) ? 'visible' : ''}`} id="how-it-works" style={{ maxWidth: "1100px", margin: "0 auto", padding: "5rem 2rem" }}>
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
           <div style={{
             display: "inline-block",
@@ -288,7 +307,7 @@ export default function Home() {
       </section>
 
       {/* LIVE DEMO SECTION */}
-      <section id="demo" style={{
+      <section ref={el => { sectionRefs.current[2] = el as HTMLDivElement; }} className={`reveal ${visibleSections.has(2) ? 'visible' : ''}`} id="demo" style={{
         background: "#EEF7F2",
         border: "1px solid #C8E6D4",
         borderLeft: "none", borderRight: "none",
@@ -427,7 +446,7 @@ export default function Home() {
       </section>
 
       {/* PRICING */}
-      <section id="pricing" style={{ maxWidth: "900px", margin: "0 auto", padding: "5rem 2rem" }}>
+      <section ref={el => { sectionRefs.current[3] = el as HTMLDivElement; }} className={`reveal reveal-delay-1 ${visibleSections.has(3) ? 'visible' : ''}`} id="pricing" style={{ maxWidth: "900px", margin: "0 auto", padding: "5rem 2rem" }}>
         <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <div style={{
             display: "inline-block",
@@ -509,7 +528,7 @@ export default function Home() {
       </section>
 
       {/* USE CASES */}
-      <section style={{
+      <section ref={el => { sectionRefs.current[4] = el as HTMLDivElement; }} className={`reveal ${visibleSections.has(4) ? 'visible' : ''}`} style={{
         background: "#EEF7F2",
         border: "1px solid #C8E6D4",
         borderLeft: "none", borderRight: "none",
@@ -568,7 +587,7 @@ export default function Home() {
       </section>
 
       {/* CTA BANNER */}
-      <section style={{
+      <section ref={el => { sectionRefs.current[5] = el as HTMLDivElement; }} className={`reveal ${visibleSections.has(5) ? 'visible' : ''}`} style={{
         background: "#2D6A4F",
         padding: "5rem 2rem",
         textAlign: "center"
